@@ -1,24 +1,21 @@
 #!/usr/bin/python3
-""" 0x16. API advanced, task 0. How many subs?
-"""
-from requests import get
+'''this module contains the function number_of_subscribers
+'''
+import requests
 
+def top_ten(subreddit):
+    # Construct the API URL
+    url = f"https://www.reddit.com/r/{subreddit}/hot.json?limit=10"
 
-def number_of_subscribers(subreddit):
-    """ Queries Reddit API and returns number of subscribers (not active users)
-    for a given subreddit.
+    # Make the API request
+    response = requests.get(url, headers={"User-Agent": "Reddit API Client"})
 
-    Args:
-        subreddit (str): subreddit to query
-
-    Return:
-        number of current subscribers to `subreddit`, or 0 if `subreddit` is
-    invalid
-    """
-    response = get('https://www.reddit.com/r/{}/about.json'.format(subreddit),
-                   headers={'User-Agent': 'allelomorph-app0'})
-    # non-existent subreddits sometimes return 404
-    if response.status_code != 200:
-        return 0
-    # and sometimes return a dummy JSON dict with only 'Listing' key
-    return response.json().get('data').get('subscribers', 0)
+    # Check if the subreddit exists
+    if response.status_code == 200:
+        data = response.json()
+        posts = data["data"]["children"]
+        for post in posts:
+            title = post["data"]["title"]
+            print(f"- {title}")
+    else:
+        print("None")
